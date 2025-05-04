@@ -8,14 +8,18 @@ function FeedPage() {
 
     useEffect(() => {
         const fetchFeed = async () => {
-            const token = localStorage.getItem("token");
-            const res = await axios.get(`${API}/api/feed/generate`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setFeed(res.data);
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get(`${API}/api/feed/generate`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setFeed(res.data);
+            } catch (error) {
+                console.error("Failed to fetch news feed", error);
+            }
         };
         fetchFeed();
-    }, []);
+    }, [API]);
 
     return (
         <div className="container mt-5">
@@ -40,7 +44,8 @@ function FeedPage() {
                                     <p className="card-text">{post.description || "No description available."}</p>
                                     <p className="card-text">
                                         <small className="text-muted">
-                                            Source: {post.source || "Unknown"} | Published: {new Date(post.publishedAt).toLocaleString()}
+                                            Source: {post.source || "Unknown"}<br />
+                                            Published: {post.publishedAt ? new Date(post.publishedAt).toLocaleString() : "N/A"}
                                         </small>
                                     </p>
                                     <a href={post.url} className="btn btn-primary mt-auto" target="_blank" rel="noopener noreferrer">
